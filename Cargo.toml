@@ -1,0 +1,24 @@
+[package]
+name = "arxiv_bot"
+version = "0.1.0"
+authors = ["Yuumu"]
+edition = "2018"
+
+[dependencies]
+log = "0.4.6"
+failure = "0.1.5"
+
+toml = "0.5.0"
+simplelog = "0.5.3"
+
+diesel = { version = "1.4.2", features = ["sqlite"] }
+
+regex = "1.1.0"
+chrono = "0.4.6"
+
+serde = { version = "1.0.86", features = ["derive"] }
+serde_json = "1.0.39"
+
+reqwest = "0.9.13"
+select = "0.4.2"
+rss = { version = "1.7.0", features = ["from_url"] }

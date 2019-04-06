@@ -1,0 +1,20 @@
+# 所有的相对路径均以当前工作目录作为基准
+[db]
+database_path = 'arxiv_bot.db'
+
+[timer]
+interval = 08:00:00
+
+[auth]
+cookie = 'cookie☆'
+
+[scraper]
+source = 'rss'
+subject = ['math.LO']
+
+[log.console]
+level = 'info'
+
+[[log.file]]
+path = 'arxiv_bot.log'
+level = 'info'
