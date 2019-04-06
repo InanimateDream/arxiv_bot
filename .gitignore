@@ -1,0 +1,9 @@
+.idea
+/target
+**/*.rs.bk
+
+diesel.toml
+arxiv_bot.db
+arxiv_bot.log
+arxiv_bot.toml
+
