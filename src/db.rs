@@ -118,12 +118,17 @@ pub mod paper {
                 .execute(conn)?;
         }
 
-        if tm > last(conn, &subj)? {
+        if let Some(t) = last(conn, &subj)? {
+            if tm > t {
+                update(update_time.find(subj.as_str()))
+                    .set(rss_time.eq(tm.to_rfc3339()))
+                    .execute(conn)?;
+            }
+        } else {
             insert_into(update_time)
                 .values((subject.eq(subj.as_str()), rss_time.eq(tm.to_rfc3339())))
                 .execute(conn)?;
         }
-
         Ok(())
     }
 
@@ -190,7 +195,7 @@ pub mod paper {
             .try_fold(Vec::new(), try_fold_helper)
     }
 
-    pub fn last(conn: SqlConn, sub: &Subject) -> Fallible<DateTime<FixedOffset>> {
+    pub fn last(conn: SqlConn, sub: &Subject) -> Fallible<Option<DateTime<FixedOffset>>> {
         use ut::dsl::*;
 
         Ok(update_time
@@ -202,9 +207,17 @@ pub mod paper {
             .map(|tm| {
                 DateTime::parse_from_rfc3339(&tm)
             })
-            .try_fold(DateTime::parse_from_rfc3339("1970-01-01T00:00:00-00:00")?, |acc, tm| {
-                if let Ok(tm) = tm {
-                    if acc > tm { Ok(acc) } else { Ok(tm) }
+            .try_fold(None, |acc, tm| {
+                if let Ok(tm) = tm { // TODO: Refactor this
+                    if let Some(acc) = acc {
+                        if acc > tm {
+                            Ok(Some(acc))
+                        } else {
+                            Ok(Some(tm))
+                        }
+                    } else {
+                        Ok(Some(tm))
+                    }
                 } else {
                     Err(tm.unwrap_err()) // safely unwrap
                 }

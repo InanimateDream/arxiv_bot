@@ -25,7 +25,8 @@ impl Scraper {
                     .map(Rss::try_from)
                     .try_fold(Vec::new(), |mut acc, rss| {
                         if let Ok(rss) = rss {
-                            if rss.last() > paper::last(conn, &rss.sub)? {
+                            if rss.last() > paper::last(conn, &rss.sub)?
+                                .unwrap_or(DateTime::parse_from_rfc3339("1970-01-01T00:00:00-00:00")?) {
                                 acc.push(rss);
                             } else {
                                 info!("本次没有更新，等待下一次轮询");
